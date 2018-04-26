@@ -4,6 +4,7 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -43,9 +44,11 @@ public class SimpleBridge extends CordovaPlugin {
      * @throws JSONException 
      */
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-		Log.i(TAG, action + " args: " + args);
+		Log.e(TAG, action + " args: " + args);
         if (action.equals("executeNative")) {
             //TODO
+			PluginResult dataResult = new PluginResult(PluginResult.Status.OK);
+			callbackContext.sendPluginResult(dataResult);			
         } else {
             // Unsupported action
             return false;
