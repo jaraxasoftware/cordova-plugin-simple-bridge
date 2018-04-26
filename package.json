@@ -1,0 +1,32 @@
+{
+  "name": "cordova-plugin-simple-bridge",
+  "version": "0.1.0",
+  "description": "Cordova plugin for having a simple bridge between native side and JS side.",
+  "main": "www/bridge.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaraxasoftware/cordova-plugin-simple-bridge.git"
+  },
+  "keywords": [
+    "cordova",
+    "plugin",
+    "android",
+    "ios",
+    "simple",
+	"bridge",
+	"native",
+	"javascript"
+  ],
+  "author": "Jaraxa Software SL <info@jaraxa.com> (http://www.jaraxa.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jaraxasoftware/cordova-plugin-simple-bridge/issues"
+  },
+  "homepage": "https://github.com/jaraxasoftware/cordova-plugin-simple-bridge#readme"
+}

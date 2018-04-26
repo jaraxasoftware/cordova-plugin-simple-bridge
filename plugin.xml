@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="com.jaraxa.simplebridge"
+      version="0.1.0">
+
+    <name>Simple Bridge</name>
+    <description>Cordova Simple Bridge Plugin</description>
+    <license>MIT</license>
+    <keywords>cordova,plugin,android,ios,simple,bridge,native,javascript</keywords>
+    <repo>https://github.com/jaraxasoftware/cordova-plugin-simple-bridge.git</repo>
+    <issue>https://github.com/jaraxasoftware/cordova-plugin-simple-bridge/issues</issue>
+
+    <js-module src="www/simplebridge.js" name="simplebridge">
+        <clobbers target="cordova.plugins.simplebridge" />
+    </js-module>
+    
+    <!-- ios -->
+    <platform name="ios">
+        
+        <config-file target="config.xml" parent="/*">
+            <feature name="SimpleBridge">
+                <param name="ios-package" value="CDVSimpleBridge"/>
+            </feature>
+        </config-file>
+            
+        <header-file src="src/ios/CDVSimpleBridge.h" />
+        <source-file src="src/ios/CDVSimpleBridge.m" />
+        
+    </platform>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="SimpleBridge">
+                <param name="android-package" value="com.jaraxa.simplebridge.SimpleBridge"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/SimpleBridge.java" target-dir="src/com/jaraxa/simplebridge" />
+    </platform> 
+
+</plugin>
