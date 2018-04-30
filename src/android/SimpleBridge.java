@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleBridge extends CordovaPlugin {
 
+    public static final String INTENT_NAME = "SimpleBridgeInit";
 	private static final String TAG = "SimpleBridge";
 	private static Map<CordovaWebView, SimpleBridge> sInstances = new HashMap<CordovaWebView, SimpleBridge>();
 
@@ -25,6 +28,7 @@ public class SimpleBridge extends CordovaPlugin {
 	private AtomicInteger mTid;
 	private Map<Integer,JsCallback> mSuccessCallbacks;
     private Map<Integer,JsCallback> mErrorCallbacks;
+    private Map<String,NativeMethod> mNativeMethods;
 
     /**
      * Constructor.
@@ -33,6 +37,15 @@ public class SimpleBridge extends CordovaPlugin {
         mTid = new AtomicInteger(0);
         mSuccessCallbacks = new HashMap<Integer, JsCallback>();
         mErrorCallbacks = new HashMap<Integer, JsCallback>();
+        mNativeMethods = new HashMap<String, NativeMethod>();
+    }
+
+    public Map<String, NativeMethod> getNativeMethods() {
+        return mNativeMethods;
+    }
+
+    public void setNativeMethods(Map<String, NativeMethod> nativeMethods) {
+        this.mNativeMethods = nativeMethods;
     }
 
     /**
@@ -65,9 +78,28 @@ public class SimpleBridge extends CordovaPlugin {
             dataResult.setKeepCallback(true);
             mNativeToJsCallbackContext = callbackContext;
             mNativeToJsCallbackContext.sendPluginResult(dataResult);
+            Intent intent = new Intent();
+            intent.setAction(INTENT_NAME);
+            LocalBroadcastManager.getInstance(mWebView.getContext()).sendBroadcast(intent);
         } else if (action.equals("executeNative")) {
-            PluginResult dataResult = new PluginResult(PluginResult.Status.OK, new JSONArray());
-			callbackContext.sendPluginResult(dataResult);
+            String methodName = args.getString(0);
+            args.remove(0);
+            NativeMethod method = mNativeMethods.get(methodName);
+            if (method != null) {
+                method.call(args, new JsCallback() {
+                    @Override
+                    public void done(JSONArray params) {
+                        PluginResult dataResult = new PluginResult(PluginResult.Status.OK, params);
+                        callbackContext.sendPluginResult(dataResult);
+                    }
+                }, new JsCallback() {
+                    @Override
+                    public void done(JSONArray params) {
+                        PluginResult dataResult = new PluginResult(PluginResult.Status.ERROR, params);
+                        callbackContext.sendPluginResult(dataResult);
+                    }
+                });
+            }
         } else if (action.equals("callSuccess")) {
             Integer tid = args.getInt(0);
             args.remove(0);
@@ -140,5 +172,10 @@ public class SimpleBridge extends CordovaPlugin {
     public static abstract class JsCallback {
         public abstract void done(JSONArray params);
     }
+
+    public static abstract class NativeMethod {
+        public abstract void call(JSONArray params, JsCallback successCallback, JsCallback errorCallback);
+    }
+
 }
 
