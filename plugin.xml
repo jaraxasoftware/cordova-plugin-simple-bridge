@@ -25,6 +25,8 @@
             
         <header-file src="src/ios/CDVSimpleBridge.h" />
         <source-file src="src/ios/CDVSimpleBridge.m" />
+        <header-file src="src/ios/CDVSimpleBridgeViewController.h" />
+        <source-file src="src/ios/CDVSimpleBridgeViewController.m" />
         
     </platform>
 
