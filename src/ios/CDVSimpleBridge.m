@@ -15,6 +15,14 @@
     return ++self.callbackId;
 }
 
+- (NSMutableDictionary *)callbacks
+{
+    if(!_callbacks) {
+        _callbacks = [[NSMutableDictionary alloc] init];
+    }
+    return _callbacks;
+}
+
 - (void)pluginInitialize
 {
     if([self.viewController isKindOfClass:[CDVSimpleBridgeViewController class]]) {
@@ -28,6 +36,7 @@
     [pluginResult setKeepCallbackAsBool:YES];
     self.mNativeToJsCallbackId = command.callbackId;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.mNativeToJsCallbackId];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SimpleBridgeInit" object:self userInfo:@{}];
 }
 
 - (void)executeNative:(CDVInvokedUrlCommand *)command
@@ -49,7 +58,31 @@
     }
 }
 
-- (NSString *)callJSMethod:(NSString *)aMethod withParams:(NSArray *)params completion:(MethodCallback)aBlock
+- (void)callSuccess:(CDVInvokedUrlCommand *)command
+{
+    NSString *mTid = [command.arguments objectAtIndex:0];
+    NSArray *params = [command.arguments subarrayWithRange:NSMakeRange(1, [command.arguments count] - 1)];
+    params = [@[@(YES)] arrayByAddingObjectsFromArray:params];
+    JSMethodCallback callback = [self.callbacks objectForKey:mTid];
+    [self.callbacks removeObjectForKey:mTid];
+    if(callback) {
+        callback(params);
+    }
+}
+
+- (void)callError:(CDVInvokedUrlCommand *)command
+{
+    NSString *mTid = [command.arguments objectAtIndex:0];
+    NSArray *params = [command.arguments subarrayWithRange:NSMakeRange(1, [command.arguments count] - 1)];
+    params = [@[@(NO)] arrayByAddingObjectsFromArray:params];
+    JSMethodCallback callback = [self.callbacks objectForKey:mTid];
+    [self.callbacks removeObjectForKey:mTid];
+    if(callback) {
+        callback(params);
+    }
+}
+
+- (NSString *)callJSMethod:(NSString *)aMethod withParams:(NSArray *)params completion:(JSMethodCallback)aBlock
 {
     NSString *mTid = [NSString stringWithFormat:@"%@", @([self getCallbackId])];
     NSMutableArray *allArgs = [NSMutableArray array];
@@ -61,25 +94,6 @@
     [dataResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:dataResult callbackId:self.mNativeToJsCallbackId];
     return mTid;
-}
-
-- (void)methodCompleted:(CDVInvokedUrlCommand *)command
-{
-    NSString *callbackId = [command.arguments objectAtIndex:0];
-    NSArray *params = [command.arguments subarrayWithRange:NSMakeRange(1, [command.arguments count] - 1)];
-    CDVPluginResult* pluginResult;
-    if(callbackId) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"CordovaResponseNotification" object:self userInfo:@{@"callbackId": callbackId, @"params": params}];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void)cordovaReady:(CDVInvokedUrlCommand *)command
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"CordovaReadyNotification" object:self userInfo:@{}];
 }
 
 @end

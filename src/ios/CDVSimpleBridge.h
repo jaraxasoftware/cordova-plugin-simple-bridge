@@ -1,7 +1,8 @@
 #import <Cordova/CDVPlugin.h>
 
-typedef void(^MethodCallback)(NSDictionary *);
-typedef void(^NativeMethod)(NSArray *, MethodCallback, MethodCallback);
+typedef void(^JSMethodCallback)(NSArray *result);
+typedef void(^MethodCallback)(NSDictionary *result);
+typedef void(^NativeMethod)(NSArray *arguments, MethodCallback successCallback, MethodCallback errorCallback);
 
 @interface CDVSimpleBridge : CDVPlugin
 
@@ -9,7 +10,8 @@ typedef void(^NativeMethod)(NSArray *, MethodCallback, MethodCallback);
 
 - (void)init:(CDVInvokedUrlCommand *)command;
 - (void)executeNative:(CDVInvokedUrlCommand *)command;
-- (void)methodCompleted:(CDVInvokedUrlCommand *)command;
-- (void)cordovaReady:(CDVInvokedUrlCommand *)command;
+- (void)callSuccess:(CDVInvokedUrlCommand *)command;
+- (void)callError:(CDVInvokedUrlCommand *)command;
+- (NSString *)callJSMethod:(NSString *)aMethod withParams:(NSArray *)params completion:(JSMethodCallback)aBlock;
 
 @end
