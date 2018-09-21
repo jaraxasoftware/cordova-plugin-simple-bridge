@@ -12,12 +12,12 @@ var simplebridge = (function () {
                 var method = params[1];
                 var restParams = params.slice(2);
                 if (typeof(_exportedApi[method]) !== "undefined") {
-                    _exportedApi[method](function(params){
-                        var newParams = params.slice();
+                    _exportedApi[method](function(){
+                        var newParams = Array.from(arguments);
                         newParams.unshift(tid);
                         exec(null, null, 'SimpleBridge', 'callSuccess', newParams);
-                    },function(error){
-                        var newParams = params.slice();
+                    },function(){
+                        var newParams = Array.from(arguments);
                         newParams.unshift(tid);
                         exec(null, null, 'SimpleBridge', 'callError', newParams);
                     }, restParams);
