@@ -46,13 +46,13 @@
     NativeMethod method = [self.mNativeMethods objectForKey:methodName];
     if (method) {
         CDVSimpleBridge * __weak weakSelf = self;
-        method(params, ^(NSDictionary *result) {
+        method(params, ^(NSArray *result) {
             NSLog(@"Success");
-            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:result];
             [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-        }, ^(NSDictionary *result) {
+        }, ^(NSArray *result) {
             NSLog(@"Error");
-            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:result];
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsArray:result];
             [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         });
     }

@@ -2,7 +2,7 @@
 
 typedef void(^JSMethodCallback)(NSArray *result);
 typedef void(^MethodCallback)(NSDictionary *result);
-typedef void(^NativeMethod)(NSArray *arguments, MethodCallback successCallback, MethodCallback errorCallback);
+typedef void(^NativeMethod)(NSArray *arguments, JSMethodCallback successCallback, JSMethodCallback errorCallback);
 
 @interface CDVSimpleBridge : CDVPlugin
 
