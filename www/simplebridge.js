@@ -13,11 +13,11 @@ var simplebridge = (function () {
                 var restParams = params.slice(2);
                 if (typeof(_exportedApi[method]) !== "undefined") {
                     _exportedApi[method](function(){
-                        var newParams = Array.from(arguments);
+                        var newParams = Array.prototype.slice.call(arguments);
                         newParams.unshift(tid);
                         exec(null, null, 'SimpleBridge', 'callSuccess', newParams);
                     },function(){
-                        var newParams = Array.from(arguments);
+                        var newParams = Array.prototype.slice.call(arguments);
                         newParams.unshift(tid);
                         exec(null, null, 'SimpleBridge', 'callError', newParams);
                     }, restParams);
