@@ -126,7 +126,7 @@ public class SimpleBridge extends CordovaPlugin {
     }
 
     private void runErrorCallback(Integer tid, JSONArray args) {
-        JsCallback callback = mSuccessCallbacks.get(tid);
+        JsCallback callback = mErrorCallbacks.get(tid);
         clearCallbacks(tid);
         if (callback != null) {
             callback.done(args);
